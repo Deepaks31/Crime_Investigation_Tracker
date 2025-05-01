@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateCase from './pages/CreateCase';
 import AdminCaseView from './pages/AdminCaseView';
+import CreateUser from './pages/CreateUser';
+import UserCasePage from './pages/UserCasePage';
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create-case" element={<CreateCase />} />
         <Route path="/admin/cases" element={<AdminCaseView />} />
+        <Route path="/admin/users" element={<CreateUser />} />
+        <Route path="/user/:userId/case/:caseId" element={<UserCasePage />} />
       </Routes>
     </BrowserRouter>
   );

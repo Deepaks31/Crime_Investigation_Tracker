@@ -4,17 +4,25 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true, // Ensures usernames are unique
+    unique: true,
   },
   password: {
     type: String,
-    required: true,
+    required: true, // Optional for auto-generated users
   },
   role: {
     type: String,
-    enum: ['admin', 'writer', 'user'], // Only these roles are valid
+    enum: ['admin', 'writer', 'user'],
     required: true,
   },
+  userId: {
+    type: String,
+    required: true,
+    unique: true,
+    length: 4,
+  }
 }, { timestamps: true });
 
-export default mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+export default User;

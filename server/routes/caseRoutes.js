@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Case = require('../models/Case');
+import Case from '../models/Case.js';
 
 // Writer creates a new case
 router.post('/', async (req, res) => {
@@ -23,4 +23,21 @@ router.get('/pending', async (req, res) => {
   }
 });
 
-module.exports = router;
+router.put('/cases/:caseId/complete', async (req, res) => {
+  const { caseId } = req.params;
+  const { isCompleted, report } = req.body;
+
+  try {
+    const updatedCase = await Case.findByIdAndUpdate(
+      caseId,
+      { isCompleted, report },
+      { new: true }
+    );
+    res.json(updatedCase);
+  } catch (err) {
+    console.error('Error completing case:', err);
+    res.status(500).send('Server error');
+  }
+});
+
+export default router;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
-  const [form, setForm] = useState({ name: '', password: '' });
+  const [form, setForm] = useState({ name: '', password: '' , userId: ''});
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -42,6 +42,14 @@ function Login() {
             placeholder="Password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
+          />
+          <input
+            type="User ID"
+            className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+            placeholder="User ID"
+            value={form.userId}
+            onChange={(e) => setForm({ ...form, userId: e.target.value })}
             required
           />
           <button

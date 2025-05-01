@@ -43,15 +43,22 @@ const Dashboard = () => {
           </button>
           )}
           {role === "admin" && (
-            <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
-              Add User
-            </button>
+            <button
+            onClick={() => navigate("/admin/users")}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+          >
+            Add User
+          </button>
+          
           )}
 
           {role === "user" && (
-            <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
-              Solve Case
-            </button>
+            <button
+            onClick={() => navigate("/user/:userId/case/:caseId")}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+          >
+            Solve Case
+          </button>
           )}
 
           {/* Profile Dropdown */}

@@ -20,11 +20,13 @@ const CreateCase = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Replace with your backend API
+
+    const createdBy = localStorage.getItem('userId'); // You must store this on login
+
     const response = await fetch('http://localhost:5000/create-case', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...formData, status: 'pending', createdBy: localStorage.getItem('name') }),
+      body: JSON.stringify({ ...formData, status: 'pending', createdBy }),
     });
 
     if (response.ok) {
@@ -36,8 +38,8 @@ const CreateCase = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col">
-      <div className="max-w-xl mx-auto bg-white p-6 rounded shadow">
+    <div className="min-h-screen w-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100">
+      <div className="max-w-xl w-full bg-white p-6 rounded shadow">
         <h2 className="text-xl font-bold mb-4 text-gray-700">Create New Case</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="text" name="title" placeholder="Case Title" onChange={handleChange} required className="w-full p-2 border rounded" />
@@ -47,7 +49,9 @@ const CreateCase = () => {
           <input type="text" name="suspectName" placeholder="Suspect Name (if known)" onChange={handleChange} className="w-full p-2 border rounded" />
           <input type="text" name="victimName" placeholder="Victim Name" onChange={handleChange} required className="w-full p-2 border rounded" />
           <textarea name="evidenceSummary" placeholder="Evidence Summary" onChange={handleChange} required className="w-full p-2 border rounded" />
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Submit Case</button>
+          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            Submit Case
+          </button>
         </form>
       </div>
     </div>
