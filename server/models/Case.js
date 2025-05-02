@@ -13,7 +13,12 @@ const caseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+  }
+  
 }, { timestamps: true });
 
 const Case = mongoose.model('Case', caseSchema);

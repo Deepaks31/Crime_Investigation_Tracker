@@ -1,11 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa"; // Profile icon
+import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
 
 const Dashboard = () => {
   const role = localStorage.getItem("role");
+  const userId = localStorage.getItem("userId"); // Get userId from localStorage
+  const [cases, setCases] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+
+  // Fetch cases only for "user" role
+  useEffect(() => {
+    const fetchCases = async () => {
+      try {
+        if (role === "user" && userId) {
+          const userId = localStorage.getItem("userId");
+          const res = await axios.get(`http://localhost:5000/cases/assigned/${userId}`);
+          console.log("Fetched cases:", res.data); // ✅ Add this to check the data
+          setCases(res.data); // Update the state with the fetched cases
+        }
+      } catch (err) {
+        console.error("Failed to fetch assigned cases:", err);
+      }
+    };
+  
+    fetchCases();
+  }, [role, userId]); // Only fetch cases if role or userId changes
 
   const handleLogout = () => {
     localStorage.clear();
@@ -16,9 +37,7 @@ const Dashboard = () => {
     <div className="min-h-screen w-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col">
       {/* Navbar */}
       <div className="w-full flex justify-between items-center bg-white shadow p-4 px-6">
-        <h1 className="text-2xl font-bold text-blue-700">
-          Criminal Case Dashboard
-        </h1>
+        <h1 className="text-2xl font-bold text-blue-700">Criminal Case Dashboard</h1>
 
         <div className="flex items-center gap-4">
           <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
@@ -35,30 +54,44 @@ const Dashboard = () => {
           )}
 
           {role === "admin" && (
-            <button
-            onClick={() => navigate("/admin/cases")}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-          >
-            Assign case
-          </button>
-          )}
-          {role === "admin" && (
-            <button
-            onClick={() => navigate("/admin/users")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-          >
-            Add User
-          </button>
-          
+            <>
+              <button
+                onClick={() => navigate("/admin/cases")}
+                className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+              >
+                Assign Case
+              </button>
+
+              <button
+                onClick={() => navigate("/admin/users")}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              >
+                Add User
+              </button>
+            </>
           )}
 
           {role === "user" && (
-            <button
-            onClick={() => navigate("/user/:userId/case/:caseId")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-          >
-            Solve Case
-          </button>
+            cases.length > 0 ? (
+              cases.map((caseItem) => {
+                const caseId = caseItem._id;
+                const assignedUserId = caseItem.assignedTo?._id || userId;
+
+                return (
+                  <div key={caseId} className="flex items-center gap-2">
+                    <span className="text-gray-700 font-medium">{caseItem.title}</span>
+                    <button
+                      onClick={() => navigate(`/user/${assignedUserId}/case/${caseId}`)}
+                      className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                    >
+                      Solve Case
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-gray-600">No cases assigned.</p>
+            )
           )}
 
           {/* Profile Dropdown */}

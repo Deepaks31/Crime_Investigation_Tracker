@@ -19,6 +19,9 @@ mongoose.connect('mongodb://localhost:27017/investigation', {
 app.use('/users', userRoutes);
 app.use('/cases', caseRoutes);
 
+
+
+
 // Signup route
 app.post('/signup', async (req, res) => {
   const { name, password, role } = req.body;
@@ -82,6 +85,19 @@ app.get('/cases/pending', async (req, res) => {
     res.json(cases);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching cases', error: err.message });
+  }
+});
+
+app.get('/cases/assigned/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const cases = await Case.find({ assignedTo: mongoose.Types.ObjectId(userId) })
+                            .populate('assignedTo', 'name email') // Optionally populate user details
+                            .exec();
+    res.json(cases); // Send the cases as response
+  } catch (error) {
+    console.error("Failed to fetch cases:", error);
+    res.status(500).json({ message: 'Failed to fetch cases' });
   }
 });
 

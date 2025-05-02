@@ -23,21 +23,39 @@ router.get('/pending', async (req, res) => {
   }
 });
 
-router.put('/cases/:caseId/complete', async (req, res) => {
-  const { caseId } = req.params;
-  const { isCompleted, report } = req.body;
+// Example in routes/caseRoutes.js
+
+router.put('/:id/assign', async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
 
   try {
     const updatedCase = await Case.findByIdAndUpdate(
-      caseId,
-      { isCompleted, report },
+      id,
+      { assignedTo: userId, status: 'assigned' },
       { new: true }
     );
-    res.json(updatedCase);
-  } catch (err) {
-    console.error('Error completing case:', err);
-    res.status(500).send('Server error');
+
+    if (!updatedCase) {
+      return res.status(404).json({ message: 'Case not found' });
+    }
+
+    res.status(200).json(updatedCase);
+  } catch (error) {
+    console.error('Assignment error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+router.get('/assigned/:userId', async (req, res) => {
+  try {
+    const cases = await Case.find({ assignedTo: req.params.userId });
+    res.json(cases);
+  } catch (err) {
+    console.error('Error fetching assigned cases:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 export default router;
