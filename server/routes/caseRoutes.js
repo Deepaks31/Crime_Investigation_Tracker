@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 const router = express.Router();
 import Case from '../models/Case.js';
 
@@ -23,8 +24,7 @@ router.get('/pending', async (req, res) => {
   }
 });
 
-// Example in routes/caseRoutes.js
-
+// Admin assigns a case
 router.put('/:id/assign', async (req, res) => {
   const { id } = req.params;
   const { userId } = req.body;
@@ -47,15 +47,29 @@ router.put('/:id/assign', async (req, res) => {
   }
 });
 
+// Get all cases assigned to a specific user
 router.get('/assigned/:userId', async (req, res) => {
   try {
-    const cases = await Case.find({ assignedTo: req.params.userId });
+    const userObjectId = new mongoose.Types.ObjectId(req.params.userId);
+    const cases = await Case.find({ assignedTo: userObjectId }).populate('assignedTo');
     res.json(cases);
   } catch (err) {
-    console.error('Error fetching assigned cases:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
+// Get details of a specific case
+router.get('/:id', async (req, res) => {
+  try {
+    const foundCase = await Case.findById(req.params.id).populate('assignedTo');
+    if (!foundCase) {
+      return res.status(404).json({ message: 'Case not found' });
+    }
+    res.json(foundCase);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 export default router;
